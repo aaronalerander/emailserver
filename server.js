@@ -7,6 +7,7 @@ const FROM_EMAIL = "aaron@scaledrones.com";
 app.use(express.json());
 
 let postmark = require("postmark");
+const { Err } = require("joi/lib/errors");
 const serverToken = "d9379748-100a-483a-8f01-499bdc0307fc";
 let postmarkClient = new postmark.ServerClient(serverToken);
 
@@ -220,10 +221,44 @@ app.post("/templatesEmails", async (req, res) => {
     return;
   }
 
+  let recordType = req.body.RecordType;
+  let templateId = parseInt(req.body.Metadata.templateId);
+  let emailId = parseInt(req.body.Metadata.emailId);
+
+  //I have to test this and see how the error handling works. So both
+  try {
+    let email = Emails.find((email) => email.id === emailId);
+    let template = Templates.find((template) => template.id === templateId);
+    console.log(email);
+    console.log(template);
+    if (email === undefined || template === undefined) {
+      // throw new Error("email id or template id not found");
+      console.log("if undefined thing");
+      throw new Error("email id or template id not found");
+    }
+
+    if (recordType == "Click") {
+      email.clicks += 1;
+      template.clicks += 1;
+    } else if (recordType == "Open") {
+      email.opens += 1;
+      template.opens += 1;
+    }
+    console.log(Templates);
+    console.log(Emails);
+    console.log("all good");
+    res.sendStatus(200);
+    return;
+  } catch (error) {
+    console.log("error block");
+    console.log(error);
+
+    res.status(500).send(error);
+    return;
+  }
+
   //i have to set up a try catch. try to find and update. error.
 
-  console.log("looks good to me");
-  res.send("returned");
   //check if open or click
   //update the tables, both of them
 });
@@ -240,27 +275,15 @@ function validateWebHook(body) {
     return { error: true, message: "doesnt contain metadata" };
   } else if (!body.Metadata.templateId) {
     return { error: true, message: "doesnt contain templateId" };
+  } else if (isNaN(body.Metadata.templateId)) {
+    return { error: true, message: "templateId must be an int" };
   } else if (!body.Metadata.emailId) {
     return { error: true, message: "doesnt contain emailId" };
+  } else if (isNaN(body.Metadata.emailId)) {
+    return { error: true, message: "emailId must be an int" };
   } else {
     return { error: false, message: "All god" };
   }
-
-  // if (
-  //   !body.RecordType ||
-  //   body.RecordType !== "Open" ||
-  //   body.RecordType !== "Click" ||
-  //   !body.Metadata ||
-  //   !body.Metadata.templateId ||
-  //   !body.Metadata["emailId"]
-  // ) {
-  //   isError = true;
-  //   return isError;
-  // } else {
-  //   console.log("its going to true");
-  //   isError = false;
-  //   return isError;
-  // }
 }
 
 //edit template
@@ -270,6 +293,22 @@ function validateWebHook(body) {
  * get the old template
  * displat it
  *
+ *
+ *
+ *
+ *
+ */
+/**
+ * So a couple things. How will this person do this.
+ *
+ * they will get a list of templates
+ * when they click it i need to load the template data
+ *
+ * they can edit the subject, (not the name), they can edit the body
+ * they hit submit.
+ *
+ * So they will send the the subject, and the body. I do need two things though, the emailId (eg welcom id)
+ * then I need to create the new template. then I need to
  *
  *
  *

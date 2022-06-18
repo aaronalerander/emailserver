@@ -31,7 +31,7 @@ curl http://localhost:3000/templatesEmails\
         "Recipient": "john@example.com",
         "RecordType": "Click" ,
         "Metadata" : {
-            "templateId" : "a_value",
-            "emailId": "b_value"
+            "templateId" : "28297082",
+            "emailId": "1"
         }
       }'
