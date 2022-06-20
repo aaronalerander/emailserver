@@ -1,15 +1,17 @@
 const Joi = require("joi");
+const cors = require("cors");
 const express = require("express");
 const app = express();
 
 const FROM_EMAIL = "aaron@scaledrones.com";
 
+app.use(cors());
 app.use(express.json());
 
 let postmark = require("postmark");
 const { Err } = require("joi/lib/errors");
 const { max } = require("joi/lib/types/array");
-const serverToken = "d9379748-100a-483a-8f01-499bdc0307fc";
+const serverToken = "e23f58d6-bd8a-4bf1-a1f9-a7ac1174dd2b";
 let postmarkClient = new postmark.ServerClient(serverToken);
 
 let Recipients = [
@@ -75,6 +77,20 @@ app.post("/templates", async (req, res) => {
   let { name, subject, textbody } = req.body;
 
   try {
+    let emailExists = Emails.find((email) => email.name === name);
+    // if (!email) res.status(404).send("The email with the given Id was not found");
+    if (emailExists !== undefined) {
+      // throw new Error("email id or template id not found");
+      res
+        .status(404)
+        .send({ message: "An email with that name already exsits" });
+      console.log("email  exsit");
+      return;
+    }
+
+    //i have to check if an eamil with that name already exsits!!!,
+    //if yes, send an error with a message!
+
     let { TemplateId, Name } = await postmarkClient.createTemplate({
       Name: name,
       HtmlBody: textbody,
@@ -108,7 +124,8 @@ app.post("/templates", async (req, res) => {
       email: email,
     });
   } catch (error) {
-    res.status(500).send(error.name);
+    console.log(error);
+    res.status(500).send(error);
     return;
   }
 });
@@ -446,4 +463,16 @@ function validateUpdateTemplate(template) {
  *
  * im doing edit this way because, I an not storeing the template data in my database.
  */
-app.listen(3000);
+app.listen(9000);
+
+/**
+ *
+ * folder for
+ * routes
+ * eg, email, templates
+ *
+ * validation
+ *
+ * types/arrays.
+ *
+ */
