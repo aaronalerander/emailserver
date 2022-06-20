@@ -25,9 +25,14 @@ import {
 import { EmailIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
 import CreateEmailModal from './CreateEmailModal';
+import { useState } from 'react';
+
 //edit email modal
 
 const VersionsTable = props => {
+  const [currentTemplate, setCurrentTemplate] = useState(
+    props.email.currentTemplateId
+  );
   return (
     <>
       <ChakraProvider resetCSS>
@@ -64,11 +69,18 @@ const VersionsTable = props => {
                 <Text>{props.email.name + version.version}</Text>
                 <Text>{version.opens}</Text>
                 <Text>{version.clicks}</Text>
-                <Link to={`/email/${version.id}`} state={{ version: version }}>
-                  <Button variant="solid" size="md" href="/test">
-                    Set Default
-                  </Button>
-                </Link>
+                <Text>
+                  {version.id === props.email.currentTemplateId ? 'yes' : 'no'}
+                </Text>
+
+                <Button
+                  variant="solid"
+                  size="md"
+                  href="/test" //!!!dont know if i needd this
+                  isDisabled={version.id === currentTemplate}
+                >
+                  Set Default
+                </Button>
               </Flex>
             </Flex>
           ))}
