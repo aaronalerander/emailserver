@@ -257,42 +257,6 @@ function validateRevertTemplate(reqBody) {
   return Joi.validate(reqBody, schema);
 }
 
-// app.put("/email", async (req, res) => {
-//   const { error } = validateRevertTemplate(req.body);
-//   if (error) {
-//     res.status(400).send(error.details[0].message);
-//     return;
-//   }
-
-//   let { emailId, templateId } = req.body;
-//   emailId = parseInt(emailId);
-//   templateId = parseInt(templateId);
-
-//   try {
-//     //did you check if that templateId belongs to that emailId?
-//     //you should do it, it will take one line of code
-//     //did you even check if that emails exsits? lmfao
-
-//     let email = Emails.find((email) => email.id === emailId);
-
-//     email.currentTemplateId = templateId;
-
-//     res.status(200).send("The email was sucesfully reverted");
-//   } catch (error) {
-//     res.status(500).send(error);
-//     return;
-//   }
-// });
-
-// function validateRevertTemplate(reqBody) {
-//   const schema = {
-//     emailId: Joi.number().min(1).required(),
-//     templateId: Joi.number().min(1).required(),
-//   };
-
-//   return Joi.validate(reqBody, schema);
-// }
-
 //route for webhook
 /**update both tables
  *
