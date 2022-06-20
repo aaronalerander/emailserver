@@ -238,11 +238,10 @@ app.put("/email/:id", async (req, res) => {
       return;
     }
 
-    console.log(Emails);
     email.currentTemplateId = templateId;
-    console.log(Emails);
 
-    res.status(200).send("The email was sucesfully reverted");
+    // res.status(200).send("The email was sucesfully reverted");
+    res.status(200).send({ email: email, template: template });
   } catch (error) {
     res.status(500).send(error);
     return;
