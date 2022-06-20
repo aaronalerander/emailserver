@@ -28,11 +28,17 @@ import CreateEmailModal from './CreateEmailModal';
 import { useState } from 'react';
 
 //edit email modal
+//i have to set and check the message, if good, change and toast, otherwise error toast dont change
 
 const VersionsTable = props => {
   const [currentTemplate, setCurrentTemplate] = useState(
     props.email.currentTemplateId
   );
+
+  function setDefault(templateId) {
+    console.log(templateId); // i have to pass this fucker down as the call back
+  }
+
   return (
     <>
       <ChakraProvider resetCSS>
@@ -77,6 +83,7 @@ const VersionsTable = props => {
                   variant="solid"
                   size="md"
                   href="/test" //!!!dont know if i needd this
+                  onClick={() => setDefault(version.id)}
                   isDisabled={version.id === currentTemplate}
                 >
                   Set Default
