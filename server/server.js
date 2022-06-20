@@ -1,14 +1,17 @@
 const Joi = require("joi");
+const cors = require("cors");
 const express = require("express");
 const app = express();
 
 const FROM_EMAIL = "aaron@scaledrones.com";
 
+app.use(cors());
 app.use(express.json());
 
 let postmark = require("postmark");
 const { Err } = require("joi/lib/errors");
-const serverToken = "d9379748-100a-483a-8f01-499bdc0307fc";
+const { max } = require("joi/lib/types/array");
+const serverToken = "e23f58d6-bd8a-4bf1-a1f9-a7ac1174dd2b";
 let postmarkClient = new postmark.ServerClient(serverToken);
 
 let Recipients = [
@@ -57,6 +60,7 @@ app.get("/emails", (req, res) => {
 
 // get all the templates of type emailId
 app.get("/templates/:emailId", (req, res) => {
+  //need to check if emailId is an int
   let emailId = parseInt(req.params.emailId);
   let templates = Templates.filter((template) => template.emailId === emailId);
   res.send(templates);
@@ -73,6 +77,20 @@ app.post("/templates", async (req, res) => {
   let { name, subject, textbody } = req.body;
 
   try {
+    let emailExists = Emails.find((email) => email.name === name);
+    // if (!email) res.status(404).send("The email with the given Id was not found");
+    if (emailExists !== undefined) {
+      // throw new Error("email id or template id not found");
+      res
+        .status(404)
+        .send({ message: "An email with that name already exsits" });
+      console.log("email  exsit");
+      return;
+    }
+
+    //i have to check if an eamil with that name already exsits!!!,
+    //if yes, send an error with a message!
+
     let { TemplateId, Name } = await postmarkClient.createTemplate({
       Name: name,
       HtmlBody: textbody,
@@ -106,7 +124,8 @@ app.post("/templates", async (req, res) => {
       email: email,
     });
   } catch (error) {
-    res.status(500).send(error.name);
+    console.log(error);
+    res.status(500).send(error);
     return;
   }
 });
@@ -123,13 +142,11 @@ function validateTemplate(template) {
 
 //send email to all users
 //TODO you might have to change this if i create a front end where you can select the recipients
-
+//i think it would be better practice to put the id in the url.
 app.post("/email", async (req, res) => {
   //not sure if i should make this validation into a Joi validation. Only thing is it is one feild so it feel be redundant/complecated for not reason
   if (!req.body.id) {
-    res
-      .status(400)
-      .send("You either did not include the email id or the id was not an int");
+    res.status(400).send("You  did not include the email id ");
   }
   if (isNaN(req.body.id)) {
     res.status(400).send("Id must be an interger");
@@ -137,7 +154,9 @@ app.post("/email", async (req, res) => {
 
   let emailId = parseInt(req.body.id);
   let email = Emails.find((email) => email.id === emailId);
-  if (!email) res.status(404).send("The email with the given Id was not found");
+  // if (!email) res.status(404).send("The email with the given Id was not found");
+  if (email === undefined)
+    res.status(404).send("The email with the given Id was not found");
 
   //i have to get the template id
   let templateId = email.currentTemplateId;
@@ -173,8 +192,12 @@ app.post("/email", async (req, res) => {
 //i need email
 /** * i need the email id and I need the template Id
  * I need to change it on my end and make sure it is good. (update array)
- * then tell a sucess message. */
-app.put("/templates", async (req, res) => {
+ * then tell a sucess message.
+ *
+ * tbh i think it is better practice if emailid is in the url and templateId is in the body
+ *  */
+//did you check if that templateId belongs to that emailId?
+app.put("/email", async (req, res) => {
   const { error } = validateRevertTemplate(req.body);
   if (error) {
     res.status(400).send(error.details[0].message);
@@ -186,6 +209,10 @@ app.put("/templates", async (req, res) => {
   templateId = parseInt(templateId);
 
   try {
+    //did you check if that templateId belongs to that emailId?
+    //you should do it, it will take one line of code
+    //did you even check if that emails exsits? lmfao
+
     let email = Emails.find((email) => email.id === emailId);
 
     email.currentTemplateId = templateId;
@@ -211,12 +238,11 @@ function validateRevertTemplate(reqBody) {
  *
  *
  * try catch  */
-
-app.post("/templatesEmails", async (req, res) => {
+//this is a terible name I think
+app.post("/webhook", async (req, res) => {
   console.log(req.body);
   let { error, message } = validateWebHook(req.body);
   if (error) {
-    console.log(message);
     res.status(400).send(message);
     return;
   }
@@ -229,11 +255,7 @@ app.post("/templatesEmails", async (req, res) => {
   try {
     let email = Emails.find((email) => email.id === emailId);
     let template = Templates.find((template) => template.id === templateId);
-    console.log(email);
-    console.log(template);
     if (email === undefined || template === undefined) {
-      // throw new Error("email id or template id not found");
-      console.log("if undefined thing");
       throw new Error("email id or template id not found");
     }
 
@@ -244,15 +266,10 @@ app.post("/templatesEmails", async (req, res) => {
       email.opens += 1;
       template.opens += 1;
     }
-    console.log(Templates);
-    console.log(Emails);
-    console.log("all good");
+
     res.sendStatus(200);
     return;
   } catch (error) {
-    console.log("error block");
-    console.log(error);
-
     res.status(500).send(error);
     return;
   }
@@ -263,7 +280,7 @@ app.post("/templatesEmails", async (req, res) => {
   //update the tables, both of them
 });
 
-//lmfao this is the fucking ulgiest code i have made
+//lmfao this is the fucking ulgiest code i have made. this is so fucking hard to read by somwone who doesnt know what its doing
 function validateWebHook(body) {
   //return {error:"this message", message:"this message"}
   // let isError = false;
@@ -286,7 +303,132 @@ function validateWebHook(body) {
   }
 }
 
+app.get("/template/:id", async (req, res) => {
+  //not sure if i should make this validation into a Joi validation. Only thing is it is one feild so it feel be redundant/complecated for not reason
+  if (!req.params.id) {
+    res.status(400).send("You did not include the email id");
+  }
+  if (isNaN(req.params.id)) {
+    res.status(400).send("Id must be an interger");
+  }
+
+  let id = parseInt(req.params.id);
+
+  try {
+    let result = await postmarkClient.getTemplate(id);
+    res.status(200).send(result);
+  } catch (error) {
+    res.status(500).send(error);
+    return;
+  }
+});
+
+app.post("/template/:emailId", async (req, res) => {
+  //not sure if i should make this validation into a Joi validation. Only thing is it is one feild so it feel be redundant/complecated for not reason
+  if (!req.params.emailId) {
+    res.status(400).send("You did not include the email id");
+  }
+  if (isNaN(req.params.emailId)) {
+    res.status(400).send("Id must be an interger");
+  }
+
+  const { error } = validateUpdateTemplate(req.body);
+  if (error) {
+    res.status(400).send(error.details[0].message);
+    return;
+  }
+
+  let { subject, textbody } = req.body;
+
+  let emailId = parseInt(req.params.emailId);
+  let email = Emails.find((email) => email.id === emailId);
+
+  let versionNumber = 0;
+  Templates.forEach(function (template) {
+    if (template.emailId === emailId) {
+      versionNumber = Math.max(versionNumber, template.version);
+    }
+  });
+  versionNumber += 1;
+
+  // for (var template in Templates) {
+  //   console.log(template);
+  //   if (template.emailId === emailId) {
+  //     versionNumber = Math.max(versionNumber, template.version);
+  //   }
+  // }
+
+  //this fuction is wrong, because it doesnt look at the emailId
+  // let versionNumber =
+  //   Math.max(...Templates.map((template) => template.version)) + 1;
+  //get the email name
+  //get the version number
+  console.log(Emails);
+  console.log(Templates);
+  console.log();
+
+  try {
+    let { TemplateId, Name } = await postmarkClient.createTemplate({
+      Name: email.name + versionNumber,
+      HtmlBody: textbody,
+      Subject: subject,
+    });
+
+    email.currentTemplateId = TemplateId;
+
+    let template = {
+      id: TemplateId,
+      emailId: email.id,
+      version: versionNumber,
+      opens: 0,
+      clicks: 0,
+    };
+
+    Templates.push(template);
+
+    res.send({
+      template: template,
+      email: email,
+    });
+
+    console.log(Emails);
+    console.log(Templates);
+
+    //print the emails to see if it updated the right email record
+  } catch (error) {
+    res.status(500).send(error);
+    return;
+  }
+});
+
+function validateUpdateTemplate(template) {
+  const schema = {
+    subject: Joi.string().min(1).required(),
+    textbody: Joi.string().min(1).required(),
+  };
+
+  return Joi.validate(template, schema);
+}
+
 //edit template
+/**
+ *
+ * what do i need,
+ * I need the name (emailid), subject, textbod
+ */
+
+/**
+ * check the data
+ * try catch
+ * to create the template
+ * then update my template arrary (plus the version code)
+ * then update my email array current template
+ *
+ *
+ * update the version code
+ *
+ * i think i need email id and the template stuff?
+ */
 
 //get template
 /**
@@ -315,4 +457,22 @@ function validateWebHook(body) {
  *
  */
 
-app.listen(3000);
+/**an issue could be people creating too many templates and loading that into the front end */
+/**
+ *
+ *
+ * im doing edit this way because, I an not storeing the template data in my database.
+ */
+app.listen(9000);
+
+/**
+ *
+ * folder for
+ * routes
+ * eg, email, templates
+ *
+ * validation
+ *
+ * types/arrays.
+ *
+ */
