@@ -50,7 +50,6 @@ const EditEmailModal = ({
       }
     }
     fetchData();
-    console.log('running');
   }, [templateId, reset]);
 
   async function onSubmitEditedTemplate(values) {
