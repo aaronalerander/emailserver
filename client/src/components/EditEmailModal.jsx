@@ -96,6 +96,7 @@ const EditEmailModal = props => {
         textbody: values.textbody,
       }),
     };
+
     reset();
 
     try {
