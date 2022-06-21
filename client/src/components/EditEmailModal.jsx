@@ -1,5 +1,5 @@
 import { useForm } from 'react-hook-form';
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -19,8 +19,6 @@ import {
 } from '@chakra-ui/react';
 
 const EditEmailModal = props => {
-  //const currentTemplate = props.currentTemplate;
-  const [currentTemplate, setCurrentTemplate] = useState();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -30,25 +28,15 @@ const EditEmailModal = props => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  //     {
-  //     defaultValues: {
-  //       subject: currentTemplate.Subject,
-  //       textbody: currentTemplate.HtmlBody,
-  //     },
-  //   }
-
   useEffect(() => {
     async function fetchData() {
-      // You can await here
       try {
-        console.log(props.templateId);
         let responce = await fetch(
           `http://localhost:9000/template/${props.templateId}`
         );
         let body = await responce.json();
-        await setCurrentTemplate(body);
-        console.log(body);
-        await reset({
+
+        reset({
           subject: body.Subject,
           textbody: body.HtmlBody,
         });
@@ -58,36 +46,9 @@ const EditEmailModal = props => {
     }
     fetchData();
     console.log('running');
-  }, [props.templateId]);
+  }, [props.templateId, reset]);
 
-  // }, [props.templateId]);
-
-  //   useEffect(() => {
-  //     console.log(currentTemplate);
-  //     reset({
-  //       subject: currentTemplate.Subject,
-  //       textbody: currentTemplate.HtmlBody,
-  //     });
-  //   }, [currentTemplate]);
-
-  //   useEffect(() => {
-  //     console.log(currentTemplate);
-  //     reset({
-  //       subject: currentTemplate.Subject,
-  //       textbody: currentTemplate.HtmlBody,
-  //     });
-  //   }, [currentTemplate]);
-
-  //   useEffect(() => {
-  //     console.log(currentTemplate);
-  //     reset({
-  //       subject: currentTemplate.Subject,
-  //       textbody: currentTemplate.HtmlBody,
-  //     });
-  //   }, []);
-
-  async function onSubmit(values) {
-    // console.log(props.template.Subject);
+  async function onSubmitEditedTemplate(values) {
     let requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -107,6 +68,7 @@ const EditEmailModal = props => {
 
       let body = await response.json();
 
+      //start and see if can swap this
       if (response.ok) {
         toast({
           title: 'Success!',
@@ -138,8 +100,7 @@ const EditEmailModal = props => {
       <Button onClick={onOpen}>Open Modal</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
-          {/* better name then onSubmit */}
+        <ModalContent as="form" onSubmit={handleSubmit(onSubmitEditedTemplate)}>
           <ModalHeader>Edit this Email</ModalHeader>
           <ModalCloseButton />
 
@@ -162,7 +123,6 @@ const EditEmailModal = props => {
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
-
             <FormControl isInvalid={errors.name}>
               <FormLabel>Body</FormLabel>
               <Textarea
@@ -177,13 +137,11 @@ const EditEmailModal = props => {
                   },
                 })}
               />
-
               <FormErrorMessage>
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
           </ModalBody>
-
           <ModalFooter>
             <Button
               colorScheme="teal"

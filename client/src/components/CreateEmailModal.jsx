@@ -27,7 +27,7 @@ const CreateEmailModal = props => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  async function onSubmit(values) {
+  async function onCreateEmail(values) {
     let requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -37,6 +37,7 @@ const CreateEmailModal = props => {
         textbody: values.body,
       }),
     };
+
     reset();
 
     try {
@@ -47,6 +48,7 @@ const CreateEmailModal = props => {
 
       let body = await response.json();
 
+      //i need to run and swap this if statement of readablity
       if (response.ok) {
         toast({
           title: 'Success!',
@@ -55,7 +57,6 @@ const CreateEmailModal = props => {
           duration: 5000,
           isClosable: true,
         });
-
         props.appendEmail(body.email);
       } else {
         toast({
@@ -77,10 +78,9 @@ const CreateEmailModal = props => {
       <Button onClick={onOpen}>Open Modal</Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onSubmit)}>
+        <ModalContent as="form" onSubmit={handleSubmit(onCreateEmail)}>
           <ModalHeader>Create An Email</ModalHeader>
           <ModalCloseButton />
-
           <ModalBody>
             <FormControl isInvalid={errors.name}>
               <FormLabel>Name</FormLabel>
@@ -99,7 +99,6 @@ const CreateEmailModal = props => {
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
-
             <FormControl isInvalid={errors.name}>
               <FormLabel>Subject</FormLabel>
               <Input
@@ -117,7 +116,6 @@ const CreateEmailModal = props => {
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
-
             <FormControl isInvalid={errors.name}>
               <FormLabel>Body</FormLabel>
               <Textarea
@@ -131,13 +129,11 @@ const CreateEmailModal = props => {
                   },
                 })}
               />
-
               <FormErrorMessage>
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
           </ModalBody>
-
           <ModalFooter>
             <Button
               colorScheme="teal"

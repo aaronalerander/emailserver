@@ -1,26 +1,6 @@
 import React from 'react';
-import {
-  ChakraProvider,
-  Stack,
-  Avatar,
-  AvatarBadge,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  FormLabel,
-  Input,
-  FormHelperText,
-  FormErrorMessage,
-  Switch,
-  InputGroup,
-  InputRightElement,
-  Icon,
-  Flex,
-  Text,
-  Button,
-} from '@chakra-ui/react';
-import { EmailIcon, CalendarIcon } from '@chakra-ui/icons';
+import { ChakraProvider, Flex, Text } from '@chakra-ui/react';
+import { CalendarIcon } from '@chakra-ui/icons';
 
 const Header = () => (
   <ChakraProvider resetCSS>

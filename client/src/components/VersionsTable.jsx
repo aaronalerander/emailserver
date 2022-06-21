@@ -1,75 +1,18 @@
 import React from 'react';
 
-import {
-  ChakraProvider,
-  Stack,
-  Avatar,
-  AvatarBadge,
-  Alert,
-  AlertIcon,
-  AlertTitle,
-  AlertDescription,
-  FormLabel,
-  Input,
-  FormHelperText,
-  FormErrorMessage,
-  Switch,
-  InputGroup,
-  InputRightElement,
-  Icon,
-  Flex,
-  Text,
-  Button,
-  useToast,
-  Box,
-} from '@chakra-ui/react';
+import { ChakraProvider, Flex, Text, Button, useToast } from '@chakra-ui/react';
 
-import { EmailIcon } from '@chakra-ui/icons';
-import { Link } from 'react-router-dom';
 import EditEmailModal from './EditEmailModal';
-import { useState, useEffect } from 'react';
-
-//edit email modal
-//i have to set and check the message, if good, change and toast, otherwise error toast dont change
-
-//fetch the template data. store it. fetch when ever setCurrentTemplate is touched
-//pass this template data as a prop to my modal.
+import { useState } from 'react';
 
 const VersionsTable = props => {
   const toast = useToast();
-  const [email, setEmail] = useState(props.email);
-  //template data state
-  //   const [currentTemplate, setCurrentTemplate] = useState(null);
+  const [email] = useState(props.email);
   const [currentTemplateId, setCurrentTemplateId] = useState(
     props.email.currentTemplateId
   );
-  //i have to pass down setCurrentTemplate
-
-  //   useEffect(() => {
-  //     async function fetchData() {
-  //       // You can await here
-  //       try {
-  //         let responce = await fetch(
-  //           `http://localhost:9000/template/${currentTemplateId}`
-  //         );
-  //         let body = await responce.json();
-
-  //         //set curren template
-  //         setCurrentTemplate(body);
-  //       } catch (error) {
-  //         console.log(error);
-  //       }
-  //     }
-  //     fetchData();
-  //   }, [currentTemplateId, currentTemplate]); //current template id
-
-  //useeffect ith currentTemplate as dependence
-
-  //pass current template to modal
 
   async function setDefault(templateId) {
-    console.log(templateId);
-    //i have to send it
     let requestOptions = {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
@@ -85,6 +28,7 @@ const VersionsTable = props => {
       );
 
       let body = await response.json();
+
       if (!response.ok) {
         toast({
           title: 'Error!',
@@ -97,8 +41,6 @@ const VersionsTable = props => {
       }
 
       setCurrentTemplateId(body.template.id);
-      //   setCurrentTemplate(body.template);
-
       toast({
         title: 'Success!',
         description: `Sucessfuly reverted to version ${body.template.version}`,
@@ -107,11 +49,6 @@ const VersionsTable = props => {
         isClosable: true,
       });
     } catch (error) {}
-
-    //i have to check if it is  good
-    //update disabled one
-
-    //give the toast acording ly
   }
 
   return (
@@ -129,19 +66,6 @@ const VersionsTable = props => {
               </Text>
               <Text>Opens</Text>
               <Text>Views</Text>
-
-              {/* <CreateEmailModal>Add Your First Site</CreateEmailModal> pass current template to modal
-              create edit template modal.
-
-              put logic inside there that does the same thing as creat email but with edit. one less feild because you cant name
-              */}
-              {/* <EditEmailModal
-                appendVersion={props.appendVersion}
-                subject={currentTemplate.Subject}
-                textbody={currentTemplate.HtmlBody}
-                email={email}
-              /> */}
-
               <>
                 {currentTemplateId === null ? (
                   console.log('not ready')
@@ -154,15 +78,8 @@ const VersionsTable = props => {
                   />
                 )}
               </>
-              {/* <EditEmailModal
-                appendVersion={props.appendVersion}
-                template={currentTemplate}
-                email={email}
-                setCurrentTemplateId={setCurrentTemplateId}
-              /> */}
             </Flex>
           </Flex>
-
           {props.versions.map(version => (
             <Flex key={version.id}>
               <Flex
@@ -171,15 +88,13 @@ const VersionsTable = props => {
                 alignItems="center"
                 minWidth={1000}
               >
-                {/* using state is a cheat that you probaly should be using */}
                 <Text>{props.email.name + version.version}</Text>
                 <Text>{version.opens}</Text>
                 <Text>{version.clicks}</Text>
-
                 <Button
                   variant="solid"
                   size="md"
-                  href="/test" //!!!dont know if i needd this
+                  href="/test"
                   onClick={() => setDefault(version.id)}
                   isDisabled={version.id === currentTemplateId}
                 >
