@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+import React, { useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -17,7 +18,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const CreateEmailModal = props => {
+const EditEmailModal = props => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -27,14 +28,33 @@ const CreateEmailModal = props => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  async function onCreateEmail(values) {
+  useEffect(() => {
+    async function fetchData() {
+      try {
+        let responce = await fetch(
+          `http://localhost:9000/template/${props.templateId}`
+        );
+        let body = await responce.json();
+
+        reset({
+          subject: body.Subject,
+          textbody: body.HtmlBody,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    console.log('running');
+  }, [props.templateId, reset]);
+
+  async function onSubmitEditedTemplate(values) {
     let requestOptions = {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        name: values.name,
         subject: values.subject,
-        textbody: values.body,
+        textbody: values.textbody,
       }),
     };
 
@@ -42,23 +62,13 @@ const CreateEmailModal = props => {
 
     try {
       let response = await fetch(
-        'http://localhost:9000/templates',
+        `http://localhost:9000/template/${props.email.id}`,
         requestOptions
       );
 
       let body = await response.json();
 
-      //i need to run and swap this if statement of readablity
-      if (response.ok) {
-        toast({
-          title: 'Success!',
-          description: "We've added your site.",
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-        props.appendEmail(body.email);
-      } else {
+      if (!response.ok) {
         toast({
           title: 'Error!',
           description: body.message,
@@ -68,6 +78,17 @@ const CreateEmailModal = props => {
         });
         return;
       }
+
+      toast({
+        title: 'Success!',
+        description: "We've edited your template and added a version.",
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+
+      props.appendVersion(body.template);
+      props.setCurrentTemplateId(body.template.id);
     } catch (error) {
       console.log(error);
     }
@@ -75,34 +96,21 @@ const CreateEmailModal = props => {
 
   return (
     <>
-      <Button onClick={onOpen}>Open Modal</Button>
+      <Button colorScheme="green" onClick={onOpen}>
+        Edit Email
+      </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onCreateEmail)}>
-          <ModalHeader>Create An Email</ModalHeader>
+        <ModalContent as="form" onSubmit={handleSubmit(onSubmitEditedTemplate)}>
+          <ModalHeader>Edit this Email</ModalHeader>
           <ModalCloseButton />
+
           <ModalBody>
-            <FormControl isInvalid={errors.name}>
-              <FormLabel>Name</FormLabel>
-              <Input
-                id="name"
-                placeholder="Welcome Email"
-                {...register('name', {
-                  required: 'This is required',
-                  minLength: {
-                    value: 4,
-                    message: 'Minimum length should be 4',
-                  },
-                })}
-              />
-              <FormErrorMessage>
-                {errors.name && errors.name.message}
-              </FormErrorMessage>
-            </FormControl>
             <FormControl isInvalid={errors.name}>
               <FormLabel>Subject</FormLabel>
               <Input
                 id="subject"
+                ref={register}
                 placeholder="Welcome to Rejest.com"
                 {...register('subject', {
                   required: 'This is required',
@@ -116,12 +124,13 @@ const CreateEmailModal = props => {
                 {errors.name && errors.name.message}
               </FormErrorMessage>
             </FormControl>
-            <FormControl isInvalid={errors.name}>
+            <FormControl isInvalid={errors.name} mt={5}>
               <FormLabel>Body</FormLabel>
               <Textarea
-                id="dody"
+                id="textbody"
                 placeholder="We're very excited to have you apart of the team"
-                {...register('body', {
+                ref={register}
+                {...register('textbody', {
                   required: 'This is required',
                   minLength: {
                     value: 4,
@@ -136,14 +145,15 @@ const CreateEmailModal = props => {
           </ModalBody>
           <ModalFooter>
             <Button
-              colorScheme="teal"
+              colorScheme="green"
               isLoading={isSubmitting}
               type="submit"
               onClick={onClose}
+              mr={2}
             >
-              Secondary Action
+              Edit Email
             </Button>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
+            <Button colorScheme="blue" onClick={onClose}>
               Close
             </Button>
           </ModalFooter>
@@ -153,4 +163,4 @@ const CreateEmailModal = props => {
   );
 };
 
-export default CreateEmailModal;
+export default EditEmailModal;

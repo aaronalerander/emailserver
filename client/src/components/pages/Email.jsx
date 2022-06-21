@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
-import VersionsTable from './VersionsTable';
+import VersionsTable from '../tables/VersionsTable';
 
 function Email() {
   const { id } = useParams();

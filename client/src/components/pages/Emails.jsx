@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import EmailsTable from './EmailsTable';
+import EmailsTable from '../tables/EmailsTable';
 
 function Emails() {
   const [emails, setEmails] = useState([]);
