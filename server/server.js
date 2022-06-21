@@ -26,14 +26,14 @@ let Recipients = [
 
 //i need a personal id and postmarkid because the open webhook does not tell me which template it was and i need to update them. So I add the serverId to the metadata when creating it
 let Templates = [
-  { id: 28297082, emailId: 1, version: 1, opens: 1, clicks: 1 },
-  { id: 1102, emailId: 1, version: 2, opens: 1, clicks: 1 },
+  { id: 28322777, emailId: 1, version: 1, opens: 1, clicks: 1 },
+  { id: 28323904, emailId: 1, version: 2, opens: 1, clicks: 1 },
   { id: 1103, emailId: 2, version: 1, opens: 1, clicks: 1 },
   { id: 1104, emailId: 3, version: 1, opens: 1, clicks: 1 },
 ];
 
 let Emails = [
-  { id: 1, name: "Welcome", opens: 2, clicks: 2, currentTemplateId: 28297082 },
+  { id: 1, name: "Welcome", opens: 2, clicks: 2, currentTemplateId: 28322777 },
   {
     id: 2,
     name: "Reset Passowrd",
@@ -182,6 +182,19 @@ app.post("/email", async (req, res) => {
     console.log(result);
     res.status(200).send("email was sucessfully sent");
   } catch (error) {
+    useEffect(() => {
+      async function fetchData() {
+        // You can await here
+        try {
+          let responce = await fetch("http://localhost:9000/emails");
+          let body = await responce.json();
+          setEmails(body);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+      fetchData();
+    }, []);
     console.log(error);
     res.status(500).send(error);
     return;
@@ -197,27 +210,50 @@ app.post("/email", async (req, res) => {
  * tbh i think it is better practice if emailid is in the url and templateId is in the body
  *  */
 //did you check if that templateId belongs to that emailId?
-app.put("/email", async (req, res) => {
+
+app.put("/email/:id", async (req, res) => {
+  if (!req.params.id) {
+    res.status(400).send("You did not include the email id");
+  }
+  if (isNaN(req.params.id)) {
+    res.status(400).send("Id must be an interger");
+  }
+
+  let emailId = parseInt(req.params.id);
+
   const { error } = validateRevertTemplate(req.body);
   if (error) {
     res.status(400).send(error.details[0].message);
     return;
   }
 
-  let { emailId, templateId } = req.body;
-  emailId = parseInt(emailId);
+  let { templateId } = req.body;
   templateId = parseInt(templateId);
 
   try {
-    //did you check if that templateId belongs to that emailId?
-    //you should do it, it will take one line of code
-    //did you even check if that emails exsits? lmfao
-
     let email = Emails.find((email) => email.id === emailId);
+
+    if (email === undefined) {
+      res.status(404).send("that email doesnt exist");
+      return;
+    }
+
+    let template = Templates.find((template) => template.id === templateId);
+
+    if (template === undefined) {
+      res.status(404).send("That template version does not exist");
+      return;
+    } else if (template.emailId !== email.id) {
+      res
+        .status(404)
+        .send("This template version does not belong to this type of email");
+      return;
+    }
 
     email.currentTemplateId = templateId;
 
-    res.status(200).send("The email was sucesfully reverted");
+    // res.status(200).send("The email was sucesfully reverted");
+    res.status(200).send({ email: email, template: template });
   } catch (error) {
     res.status(500).send(error);
     return;
@@ -226,7 +262,6 @@ app.put("/email", async (req, res) => {
 
 function validateRevertTemplate(reqBody) {
   const schema = {
-    emailId: Joi.number().min(1).required(),
     templateId: Joi.number().min(1).required(),
   };
 
@@ -306,10 +341,12 @@ function validateWebHook(body) {
 app.get("/template/:id", async (req, res) => {
   //not sure if i should make this validation into a Joi validation. Only thing is it is one feild so it feel be redundant/complecated for not reason
   if (!req.params.id) {
-    res.status(400).send("You did not include the email id");
+    res.status(400).send("You did not include the template id");
+    return;
   }
   if (isNaN(req.params.id)) {
     res.status(400).send("Id must be an interger");
+    return;
   }
 
   let id = parseInt(req.params.id);

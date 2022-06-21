@@ -63,7 +63,7 @@ const EmailsTable = props => {
                 <Text>{email.name}</Text>
                 <Text>{email.opens}</Text>
                 <Text>{email.clicks}</Text>
-                <Link to={`/email/${email.id}`} state={{ name: email.name }}>
+                <Link to={`/email/${email.id}`} state={{ email: email }}>
                   <Button variant="solid" size="md" href="/test">
                     View Details
                   </Button>
