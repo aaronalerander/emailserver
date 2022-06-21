@@ -18,8 +18,9 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const CreateEmailModal = props => {
-  const currentTemplate = props.currentTemplate;
+const EditEmailModal = props => {
+  //const currentTemplate = props.currentTemplate;
+  const [currentTemplate, setCurrentTemplate] = useState();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -27,28 +28,47 @@ const CreateEmailModal = props => {
     register,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm({
-    defaultValues: {
-      subject: currentTemplate.Subject,
-      textbody: currentTemplate.HtmlBody,
-    },
-  });
+  } = useForm();
 
-  // useEffect(() => {
-  //   console.log(currentTemplate);
-  //   reset({
-  //     subject: currentTemplate.Subject,
-  //     textbody: currentTemplate.HtmlBody,
-  //   });
-  // }, [currentTemplate]);
+  //     {
+  //     defaultValues: {
+  //       subject: currentTemplate.Subject,
+  //       textbody: currentTemplate.HtmlBody,
+  //     },
+  //   }
 
-  function testFuc() {
-    console.log('running my funciton');
-    reset({
-      subject: currentTemplate.Subject,
-      textbody: currentTemplate.HtmlBody,
-    });
-  }
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      try {
+        console.log(props.templateId);
+        let responce = await fetch(
+          `http://localhost:9000/template/${props.templateId}`
+        );
+        let body = await responce.json();
+        await setCurrentTemplate(body);
+        console.log(body);
+        await reset({
+          subject: body.Subject,
+          textbody: body.HtmlBody,
+        });
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+    console.log('running');
+  }, [props.templateId]);
+
+  // }, [props.templateId]);
+
+  //   useEffect(() => {
+  //     console.log(currentTemplate);
+  //     reset({
+  //       subject: currentTemplate.Subject,
+  //       textbody: currentTemplate.HtmlBody,
+  //     });
+  //   }, [currentTemplate]);
 
   //   useEffect(() => {
   //     console.log(currentTemplate);
@@ -96,8 +116,7 @@ const CreateEmailModal = props => {
         });
 
         props.appendVersion(body.template);
-        props.setDefault(body.template.id);
-        testFuc();
+        props.setCurrentTemplateId(body.template.id);
       } else {
         toast({
           title: 'Error!',
@@ -183,4 +202,4 @@ const CreateEmailModal = props => {
   );
 };
 
-export default CreateEmailModal;
+export default EditEmailModal;

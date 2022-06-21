@@ -39,35 +39,36 @@ const VersionsTable = props => {
   const toast = useToast();
   const [email, setEmail] = useState(props.email);
   //template data state
-  const [currentTemplate, setCurrentTemplate] = useState(null);
+  //   const [currentTemplate, setCurrentTemplate] = useState(null);
   const [currentTemplateId, setCurrentTemplateId] = useState(
     props.email.currentTemplateId
   );
+  //i have to pass down setCurrentTemplate
 
-  useEffect(() => {
-    async function fetchData() {
-      // You can await here
-      try {
-        let responce = await fetch(
-          `http://localhost:9000/template/${currentTemplateId}`
-        );
-        let body = await responce.json();
+  //   useEffect(() => {
+  //     async function fetchData() {
+  //       // You can await here
+  //       try {
+  //         let responce = await fetch(
+  //           `http://localhost:9000/template/${currentTemplateId}`
+  //         );
+  //         let body = await responce.json();
 
-        //set curren template
-        setCurrentTemplate(body);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
-  }, [currentTemplateId, currentTemplate]); //current template id
+  //         //set curren template
+  //         setCurrentTemplate(body);
+  //       } catch (error) {
+  //         console.log(error);
+  //       }
+  //     }
+  //     fetchData();
+  //   }, [currentTemplateId, currentTemplate]); //current template id
 
   //useeffect ith currentTemplate as dependence
 
   //pass current template to modal
 
   async function setDefault(templateId) {
-    console.log(templateId); // i have to pass this fucker down as the call back
+    console.log(templateId);
     //i have to send it
     let requestOptions = {
       method: 'PUT',
@@ -96,7 +97,7 @@ const VersionsTable = props => {
       }
 
       setCurrentTemplateId(body.template.id);
-      setCurrentTemplate(body.template);
+      //   setCurrentTemplate(body.template);
 
       toast({
         title: 'Success!',
@@ -140,16 +141,16 @@ const VersionsTable = props => {
                 textbody={currentTemplate.HtmlBody}
                 email={email}
               /> */}
-              <Text>{currentTemplate === null ? 'yes' : 'no'}</Text>
+
               <>
-                {currentTemplate === null ? (
+                {currentTemplateId === null ? (
                   console.log('not ready')
                 ) : (
                   <EditEmailModal
                     appendVersion={props.appendVersion}
-                    currentTemplate={currentTemplate}
+                    templateId={currentTemplateId}
                     email={email}
-                    setDefault={setDefault}
+                    setCurrentTemplateId={setCurrentTemplateId}
                   />
                 )}
               </>
