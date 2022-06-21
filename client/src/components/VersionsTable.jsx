@@ -1,4 +1,5 @@
 import React from 'react';
+
 import {
   ChakraProvider,
   Stack,
@@ -19,24 +20,97 @@ import {
   Flex,
   Text,
   Button,
+  useToast,
   Box,
 } from '@chakra-ui/react';
 
 import { EmailIcon } from '@chakra-ui/icons';
 import { Link } from 'react-router-dom';
-import CreateEmailModal from './CreateEmailModal';
-import { useState } from 'react';
+import EditEmailModal from './EditEmailModal';
+import { useState, useEffect } from 'react';
 
 //edit email modal
 //i have to set and check the message, if good, change and toast, otherwise error toast dont change
 
+//fetch the template data. store it. fetch when ever setCurrentTemplate is touched
+//pass this template data as a prop to my modal.
+
 const VersionsTable = props => {
-  const [currentTemplate, setCurrentTemplate] = useState(
+  const toast = useToast();
+  const [email, setEmail] = useState(props.email);
+  //template data state
+  const [currentTemplate, setCurrentTemplate] = useState(null);
+  const [currentTemplateId, setCurrentTemplateId] = useState(
     props.email.currentTemplateId
   );
 
-  function setDefault(templateId) {
+  useEffect(() => {
+    async function fetchData() {
+      // You can await here
+      try {
+        let responce = await fetch(
+          `http://localhost:9000/template/${currentTemplateId}`
+        );
+        let body = await responce.json();
+
+        //set curren template
+        setCurrentTemplate(body);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    fetchData();
+  }, [currentTemplateId, currentTemplate]); //current template id
+
+  //useeffect ith currentTemplate as dependence
+
+  //pass current template to modal
+
+  async function setDefault(templateId) {
     console.log(templateId); // i have to pass this fucker down as the call back
+    //i have to send it
+    let requestOptions = {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        templateId: templateId,
+      }),
+    };
+
+    try {
+      let response = await fetch(
+        `http://localhost:9000/email/${email.id}`,
+        requestOptions
+      );
+
+      let body = await response.json();
+      if (!response.ok) {
+        toast({
+          title: 'Error!',
+          description: body.message,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+        return;
+      }
+
+      setCurrentTemplateId(body.template.id);
+      setCurrentTemplate(body.template);
+
+      toast({
+        title: 'Success!',
+        description: `Sucessfuly reverted to version ${body.template.version}`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (error) {}
+
+    //i have to check if it is  good
+    //update disabled one
+
+    //give the toast acording ly
   }
 
   return (
@@ -54,12 +128,37 @@ const VersionsTable = props => {
               </Text>
               <Text>Opens</Text>
               <Text>Views</Text>
-              <Button variant="solid" size="lg" colorScheme="green">
-                {/* either this is the model. i will need to pass it the call back function  */}
-                Edit Template
-              </Button>
-              {/* <CreateEmailModal>Add Your First Site</CreateEmailModal> */}
-              <CreateEmailModal appendVersion={props.appendVersion} />
+
+              {/* <CreateEmailModal>Add Your First Site</CreateEmailModal> pass current template to modal
+              create edit template modal.
+
+              put logic inside there that does the same thing as creat email but with edit. one less feild because you cant name
+              */}
+              {/* <EditEmailModal
+                appendVersion={props.appendVersion}
+                subject={currentTemplate.Subject}
+                textbody={currentTemplate.HtmlBody}
+                email={email}
+              /> */}
+              <Text>{currentTemplate === null ? 'yes' : 'no'}</Text>
+              <>
+                {currentTemplate === null ? (
+                  console.log('not ready')
+                ) : (
+                  <EditEmailModal
+                    appendVersion={props.appendVersion}
+                    currentTemplate={currentTemplate}
+                    email={email}
+                    setDefault={setDefault}
+                  />
+                )}
+              </>
+              {/* <EditEmailModal
+                appendVersion={props.appendVersion}
+                template={currentTemplate}
+                email={email}
+                setCurrentTemplateId={setCurrentTemplateId}
+              /> */}
             </Flex>
           </Flex>
 
@@ -75,18 +174,15 @@ const VersionsTable = props => {
                 <Text>{props.email.name + version.version}</Text>
                 <Text>{version.opens}</Text>
                 <Text>{version.clicks}</Text>
-                <Text>
-                  {version.id === props.email.currentTemplateId ? 'yes' : 'no'}
-                </Text>
 
                 <Button
                   variant="solid"
                   size="md"
                   href="/test" //!!!dont know if i needd this
                   onClick={() => setDefault(version.id)}
-                  isDisabled={version.id === currentTemplate}
+                  isDisabled={version.id === currentTemplateId}
                 >
-                  Set Default
+                  Revert
                 </Button>
               </Flex>
             </Flex>
