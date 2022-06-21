@@ -17,7 +17,7 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const CreateEmailModal = props => {
+const CreateEmailModal = ({ appendEmail }) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -66,7 +66,7 @@ const CreateEmailModal = props => {
         duration: 5000,
         isClosable: true,
       });
-      props.appendEmail(body.email);
+      appendEmail(body.email);
     } catch (error) {
       console.log(error);
     }

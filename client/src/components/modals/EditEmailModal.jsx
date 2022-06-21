@@ -18,7 +18,12 @@ import {
   FormErrorMessage,
 } from '@chakra-ui/react';
 
-const EditEmailModal = props => {
+const EditEmailModal = ({
+  appendVersion,
+  templateId,
+  email,
+  setCurrentTemplateId,
+}) => {
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const {
@@ -32,7 +37,7 @@ const EditEmailModal = props => {
     async function fetchData() {
       try {
         let responce = await fetch(
-          `http://localhost:9000/template/${props.templateId}`
+          `http://localhost:9000/template/${templateId}`
         );
         let body = await responce.json();
 
@@ -46,7 +51,7 @@ const EditEmailModal = props => {
     }
     fetchData();
     console.log('running');
-  }, [props.templateId, reset]);
+  }, [templateId, reset]);
 
   async function onSubmitEditedTemplate(values) {
     let requestOptions = {
@@ -62,7 +67,7 @@ const EditEmailModal = props => {
 
     try {
       let response = await fetch(
-        `http://localhost:9000/template/${props.email.id}`,
+        `http://localhost:9000/template/${email.id}`,
         requestOptions
       );
 
@@ -87,8 +92,8 @@ const EditEmailModal = props => {
         isClosable: true,
       });
 
-      props.appendVersion(body.template);
-      props.setCurrentTemplateId(body.template.id);
+      appendVersion(body.template);
+      setCurrentTemplateId(body.template.id);
     } catch (error) {
       console.log(error);
     }

@@ -4,7 +4,7 @@ import { ChakraProvider, Flex, Text, Button, Box } from '@chakra-ui/react';
 import { Link } from 'react-router-dom';
 import CreateEmailModal from '../modals/CreateEmailModal';
 
-const EmailsTable = props => {
+const EmailsTable = ({ appendEmail, emails }) => {
   return (
     <>
       <ChakraProvider resetCSS>
@@ -34,12 +34,12 @@ const EmailsTable = props => {
                   </Text>
                   <Text>Opens</Text>
                   <Text>Views</Text>
-                  <CreateEmailModal appendEmail={props.appendEmail} />
+                  <CreateEmailModal appendEmail={appendEmail} />
                 </Flex>
               </Box>
             </Flex>
 
-            {props.emails.map(email => (
+            {emails.map(email => (
               <Flex key={email.id}>
                 <Flex
                   key={email.id}

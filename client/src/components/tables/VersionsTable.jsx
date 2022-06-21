@@ -12,11 +12,10 @@ import {
 import EditEmailModal from '../modals/EditEmailModal';
 import { useState } from 'react';
 
-const VersionsTable = props => {
+const VersionsTable = ({ email, versions, appendVersion }) => {
   const toast = useToast();
-  const [email] = useState(props.email);
   const [currentTemplateId, setCurrentTemplateId] = useState(
-    props.email.currentTemplateId
+    email.currentTemplateId
   );
 
   async function setTemplateAsDefault(templateId) {
@@ -83,7 +82,7 @@ const VersionsTable = props => {
                   minWidth={1000}
                 >
                   <Text fontWeight="bold" fontSize={30}>
-                    {props.email.name}
+                    {email.name}
                   </Text>
                   <Text>Opens</Text>
                   <Text>Views</Text>
@@ -92,7 +91,7 @@ const VersionsTable = props => {
                       console.log('not ready')
                     ) : (
                       <EditEmailModal
-                        appendVersion={props.appendVersion}
+                        appendVersion={appendVersion}
                         templateId={currentTemplateId}
                         email={email}
                         setCurrentTemplateId={setCurrentTemplateId}
@@ -103,7 +102,7 @@ const VersionsTable = props => {
               </Box>
             </Flex>
 
-            {props.versions.map(version => (
+            {versions.map(version => (
               <Flex key={version.id}>
                 <Flex
                   key={version.id}
@@ -112,7 +111,7 @@ const VersionsTable = props => {
                   minWidth={1000}
                   mb={5}
                 >
-                  <Text>{props.email.name + version.version}</Text>
+                  <Text>{email.name + version.version}</Text>
                   <Text color="blue">{version.opens}</Text>
                   <Text color="red">{version.clicks}</Text>
                   <Button
