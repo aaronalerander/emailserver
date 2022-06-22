@@ -17,10 +17,20 @@ function sendEmail(emailId, templateId, recipients) {
       emailId: emailId,
     },
   });
-
-  res.status(200).send("email was sucessfully sent");
 }
 
-module.exports = { postmarkClient, sendEmail };
+function getTemplate(id) {
+  return postmarkClient.getTemplate(id);
+}
+
+function createTemplate(name, htmlBody, subject) {
+  return postmarkClient.createTemplate({
+    Name: name,
+    HtmlBody: htmlBody,
+    Subject: subject,
+  });
+}
+
+module.exports = { postmarkClient, sendEmail, getTemplate, createTemplate };
 
 //generic send email that takes params

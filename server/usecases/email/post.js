@@ -21,12 +21,10 @@ function post(id) {
 
 function validateEmailId(id) {
   if (!id) {
-    res.status(400).send("You  did not include the email id ");
-    return;
+    throw "You did not include the email id";
   }
   if (isNaN(id)) {
-    res.status(400).send("Id must be an integer");
-    return;
+    throw "Email Id must be an integer";
   }
 
   return parseInt(id);
@@ -36,8 +34,7 @@ function getEmailById(id) {
   let email = Data.Emails.find((email) => email.id === id);
 
   if (email === undefined) {
-    res.status(404).send("The email with the given Id was not found");
-    return;
+    throw "The email with the given id was not found";
   }
   return email;
 }
