@@ -1,7 +1,7 @@
-const Data = require("../../Data/Database");
+const data = require("../../data/database");
 
 function validateEmail(id) {
-  let email = Data.Emails.find((email) => email.id === id);
+  let email = data.Emails.find((email) => email.id === id);
   if (email === undefined) {
     throw "That email doesnt exists";
   }

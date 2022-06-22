@@ -1,7 +1,7 @@
-const Data = require("../../Data/Database");
+const data = require("../../data/database");
 
 function get() {
-  return Data.Recipients;
+  return data.Recipients;
 }
 
 module.exports = get;

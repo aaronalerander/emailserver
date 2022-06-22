@@ -1,5 +1,5 @@
-const Data = require("../../Data/Database");
-const Validate = require("../../Data/validate");
+const data = require("../../data/database");
+const Validate = require("../../data/validate");
 const utils = require("../utils/");
 
 function put(id, body) {
@@ -31,7 +31,7 @@ function validateBody(body) {
 }
 
 function validateTemplate(templateId, emailId) {
-  let template = Data.Templates.find((template) => template.id === templateId);
+  let template = data.Templates.find((template) => template.id === templateId);
 
   if (template === undefined) {
     throw "That template version doesnt exist";

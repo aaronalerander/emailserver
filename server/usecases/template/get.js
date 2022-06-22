@@ -1,4 +1,4 @@
-const Postmark = require("../../Data/PostMark");
+const Postmark = require("../../data/postMark");
 
 function get(id) {
   id = validateTemplateId(id);

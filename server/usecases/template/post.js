@@ -1,6 +1,6 @@
-const Data = require("../../Data/Database");
-const Postmark = require("../../Data/PostMark");
-const Validate = require("../../Data/validate");
+const data = require("../../data/database");
+const Postmark = require("../../data/postMark");
+const Validate = require("../../data/validate");
 const utils = require("../utils/");
 
 async function post(emailId, updateTemplate) {
@@ -36,7 +36,7 @@ function updateDataBase(email, templateId, versionNumber) {
     clicks: 0,
   };
 
-  Data.Templates.push(template);
+  data.Templates.push(template);
 
   return template;
 }
@@ -51,7 +51,7 @@ function validateUpdateTemplate(updateTemplate) {
 
 function getVersionNumber(emailId) {
   let versionNumber = 0;
-  Data.Templates.forEach(function (template) {
+  data.Templates.forEach(function (template) {
     if (template.emailId === emailId) {
       versionNumber = Math.max(versionNumber, template.version);
     }
