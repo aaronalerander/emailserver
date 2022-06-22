@@ -1,12 +1,13 @@
 const Data = require("../../Data/Database");
 const Postmark = require("../../Data/PostMark");
 const Validate = require("../../Data/validate");
+const utils = require("../utils/");
 
 async function post(emailId, updateTemplate) {
-  emailId = validateEmailId(emailId);
+  emailId = utils.validateEmailId(emailId);
   if (emailId === null) return;
 
-  let email = validateEmail(emailId);
+  let email = utils.validateEmail(emailId);
   if (email === null) return;
 
   let { subject, textbody } = validateUpdateTemplate(updateTemplate);
@@ -40,31 +41,12 @@ function updateDataBase(email, templateId, versionNumber) {
   return template;
 }
 
-function validateEmailId(id) {
-  if (!id) {
-    throw "You did not include the email id";
-  }
-  if (isNaN(id)) {
-    throw "Email Id must be an integer";
-  }
-
-  return parseInt(id);
-}
-
 function validateUpdateTemplate(updateTemplate) {
   const { error } = Validate.validateUpdateTemplate(updateTemplate);
   if (error) {
     throw error.details[0].message;
   }
   return { subject: updateTemplate.subject, textbody: updateTemplate.textbody };
-}
-
-function validateEmail(id) {
-  let email = Data.Emails.find((email) => email.id === id);
-  if (email === undefined) {
-    throw "That email doesnt exist";
-  }
-  return email;
 }
 
 function getVersionNumber(emailId) {

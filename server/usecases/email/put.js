@@ -1,14 +1,15 @@
 const Data = require("../../Data/Database");
 const Validate = require("../../Data/validate");
+const utils = require("../utils/");
 
 function put(id, body) {
-  let emailId = validateEmailId(id);
+  let emailId = utils.validateEmailId(id);
   if (emailId === null) return;
 
-  let email = validateEmail(emailId);
+  let email = utils.validateEmail(emailId);
   if (email === null) return;
 
-  let templateId = validateTemplateId(body);
+  let templateId = validateBody(body);
   if (templateId === null) return;
 
   let template = validateTemplate(templateId, emailId);
@@ -19,18 +20,7 @@ function put(id, body) {
   return { email: email, template: template };
 }
 
-function validateEmailId(id) {
-  if (!id) {
-    throw "You did not include the email id";
-  }
-  if (isNaN(id)) {
-    throw "Email Id must be an integer";
-  }
-
-  return parseInt(id);
-}
-
-function validateTemplateId(body) {
+function validateBody(body) {
   const { error } = Validate.validateRevertTemplate(body);
   if (error) {
     throw error;
@@ -38,15 +28,6 @@ function validateTemplateId(body) {
 
   let templateId = body.templateId;
   return parseInt(templateId);
-}
-
-function validateEmail(id) {
-  let email = Data.Emails.find((email) => email.id === id);
-
-  if (email === undefined) {
-    throw "That email doesnt exist";
-  }
-  return email;
 }
 
 function validateTemplate(templateId, emailId) {

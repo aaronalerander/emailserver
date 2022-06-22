@@ -1,8 +1,9 @@
 const Postmark = require("../../Data/PostMark");
 const Data = require("../../Data/Database");
+const utils = require("../utils/");
 
 function post(id) {
-  let emailId = validateEmailId(id);
+  let emailId = utils.validateEmailId(id);
   if (emailId === null) return;
 
   let email = getEmailById(emailId);
@@ -15,19 +16,6 @@ function post(id) {
   ).join(", ");
 
   return Postmark.sendEmail(emailId, currentTemplateId, recipientEmails);
-}
-
-//****** PRIVATE FUNCTIONS ******/
-
-function validateEmailId(id) {
-  if (!id) {
-    throw "You did not include the email id";
-  }
-  if (isNaN(id)) {
-    throw "Email Id must be an integer";
-  }
-
-  return parseInt(id);
 }
 
 function getEmailById(id) {

@@ -33,51 +33,6 @@ const CreateEmailModal = ({ appendEmail }) => {
     postNewEmail(values, reset, toast, appendEmail);
   }
 
-  // async function onSubmitCreateEmail(values) {
-  //   let requestOptions = {
-  //     method: 'POST',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({
-  //       name: values.name,
-  //       subject: values.subject,
-  //       textbody: values.body,
-  //     }),
-  //   };
-
-  //   reset();
-
-  //   try {
-  //     let response = await fetch(
-  //       'http://localhost:9000/templates',
-  //       requestOptions
-  //     );
-
-  //     let body = await response.json();
-
-  //     if (!response.ok) {
-  //       toast({
-  //         title: 'Error!',
-  //         description: body.message,
-  //         status: 'error',
-  //         duration: 5000,
-  //         isClosable: true,
-  //       });
-  //       return;
-  //     }
-
-  //     toast({
-  //       title: 'Success!',
-  //       description: 'Your new email has been created!',
-  //       status: 'success',
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //     appendEmail(body.email);
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-  // }
-
   return (
     <>
       <Button colorScheme="green" onClick={onOpen}>

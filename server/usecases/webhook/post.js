@@ -1,13 +1,14 @@
 const Validate = require("../../Data/validate");
 const Data = require("../../Data/Database");
+const utils = require("../utils/");
 
 function post(webhook) {
   let { recordType, templateId, emailId } = validateWebHook(webhook);
 
-  let email = validateEmail(emailId);
+  let email = utils.validateEmail(emailId);
   if (email === null) return;
 
-  let template = validateTemplate(templateId);
+  let template = validateTemplateExists(templateId);
   if (email === null) return;
 
   if (recordType == "Click") updateClicks(email, template);
@@ -26,21 +27,13 @@ function updateOpens(email, template) {
   template.opens += 1;
 }
 
-function validateTemplate(templateId) {
+function validateTemplateExists(templateId) {
   let template = Data.Templates.find((template) => template.id === templateId);
 
   if (template === undefined) {
     throw "That template version doesnt exist";
   }
   return template;
-}
-
-function validateEmail(id) {
-  let email = Data.Emails.find((email) => email.id === id);
-  if (email === undefined) {
-    throw "That email doesnt exists";
-  }
-  return email;
 }
 
 function validateWebHook(webhook) {
