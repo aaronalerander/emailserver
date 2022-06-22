@@ -1,4 +1,5 @@
 import { useForm } from 'react-hook-form';
+
 import {
   Modal,
   ModalOverlay,
@@ -16,6 +17,7 @@ import {
   useToast,
   FormErrorMessage,
 } from '@chakra-ui/react';
+import { postNewEmail } from '../../api/createEmailModal/postNewEmail';
 
 const CreateEmailModal = ({ appendEmail }) => {
   const toast = useToast();
@@ -27,50 +29,54 @@ const CreateEmailModal = ({ appendEmail }) => {
     formState: { errors, isSubmitting },
   } = useForm();
 
-  async function onCreateEmail(values) {
-    let requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        name: values.name,
-        subject: values.subject,
-        textbody: values.body,
-      }),
-    };
-
-    reset();
-
-    try {
-      let response = await fetch(
-        'http://localhost:9000/templates',
-        requestOptions
-      );
-
-      let body = await response.json();
-
-      if (!response.ok) {
-        toast({
-          title: 'Error!',
-          description: body.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
-      }
-
-      toast({
-        title: 'Success!',
-        description: 'Your new email has been created!',
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-      appendEmail(body.email);
-    } catch (error) {
-      console.log(error);
-    }
+  async function onSubmitCreateEmail(values) {
+    postNewEmail(values, reset, toast, appendEmail);
   }
+
+  // async function onSubmitCreateEmail(values) {
+  //   let requestOptions = {
+  //     method: 'POST',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({
+  //       name: values.name,
+  //       subject: values.subject,
+  //       textbody: values.body,
+  //     }),
+  //   };
+
+  //   reset();
+
+  //   try {
+  //     let response = await fetch(
+  //       'http://localhost:9000/templates',
+  //       requestOptions
+  //     );
+
+  //     let body = await response.json();
+
+  //     if (!response.ok) {
+  //       toast({
+  //         title: 'Error!',
+  //         description: body.message,
+  //         status: 'error',
+  //         duration: 5000,
+  //         isClosable: true,
+  //       });
+  //       return;
+  //     }
+
+  //     toast({
+  //       title: 'Success!',
+  //       description: 'Your new email has been created!',
+  //       status: 'success',
+  //       duration: 5000,
+  //       isClosable: true,
+  //     });
+  //     appendEmail(body.email);
+  //   } catch (error) {
+  //     console.log(error);
+  //   }
+  // }
 
   return (
     <>
@@ -79,7 +85,7 @@ const CreateEmailModal = ({ appendEmail }) => {
       </Button>
       <Modal isOpen={isOpen} onClose={onClose}>
         <ModalOverlay />
-        <ModalContent as="form" onSubmit={handleSubmit(onCreateEmail)}>
+        <ModalContent as="form" onSubmit={handleSubmit(onSubmitCreateEmail)}>
           <ModalHeader>Create An Email</ModalHeader>
           <ModalCloseButton />
           <ModalBody>

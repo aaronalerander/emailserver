@@ -18,7 +18,7 @@ const EmailsTable = ({ appendEmail, emails }) => {
             <EmailsTableHeader appendEmail={appendEmail} />
 
             {emails.map(email => (
-              <EmailsTableRow email={email} />
+              <EmailsTableRow key={email.id} email={email} />
             ))}
           </Box>
         </Flex>

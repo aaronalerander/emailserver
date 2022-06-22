@@ -5,9 +5,8 @@ import { Link } from 'react-router-dom';
 const EmailsTableRow = ({ email }) => {
   return (
     <>
-      <Flex key={email.id}>
+      <Flex>
         <Flex
-          key={email.id}
           justifyContent="space-between"
           alignItems="center"
           minWidth={1000}

@@ -70,6 +70,7 @@ const VersionsTable = ({ email, versions, appendVersion }) => {
 
             {versions.map(version => (
               <VersionsTableRow
+                key={version.id}
                 version={version}
                 email={email}
                 setTemplateAsDefault={setTemplateAsDefault}
