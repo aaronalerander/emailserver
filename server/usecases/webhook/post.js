@@ -1,5 +1,5 @@
-const Validate = require("../../Data/validate");
-const Data = require("../../Data/Database");
+const Validate = require("../../data/validate");
+const data = require("../../data/database");
 const utils = require("../utils/");
 
 function post(webhook) {
@@ -28,7 +28,7 @@ function updateOpens(email, template) {
 }
 
 function validateTemplateExists(templateId) {
-  let template = Data.Templates.find((template) => template.id === templateId);
+  let template = data.Templates.find((template) => template.id === templateId);
 
   if (template === undefined) {
     throw "That template version doesnt exist";

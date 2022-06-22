@@ -1,5 +1,5 @@
-const Postmark = require("../../Data/PostMark");
-const Data = require("../../Data/Database");
+const Postmark = require("../../data/postMark");
+const data = require("../../data/database");
 const utils = require("../utils/");
 
 function post(id) {
@@ -11,7 +11,7 @@ function post(id) {
 
   let currentTemplateId = email.currentTemplateId;
 
-  let recipientEmails = Data.Recipients.map(
+  let recipientEmails = data.Recipients.map(
     (recipient) => recipient.email
   ).join(", ");
 
@@ -19,7 +19,7 @@ function post(id) {
 }
 
 function getEmailById(id) {
-  let email = Data.Emails.find((email) => email.id === id);
+  let email = data.Emails.find((email) => email.id === id);
 
   if (email === undefined) {
     throw "The email with the given id was not found";

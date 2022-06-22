@@ -1,6 +1,6 @@
-const Data = require("../../Data/Database");
-const Postmark = require("../../Data/PostMark");
-const Validate = require("../../Data/validate");
+const data = require("../../data/database");
+const Postmark = require("../../data/postMark");
+const Validate = require("../../data/validate");
 
 async function post(body) {
   let { name, subject, textbody } = validateBody(body);
@@ -19,7 +19,7 @@ async function post(body) {
 }
 
 function addEmailToDataBase(name, templateId) {
-  let emailId = Data.Emails.length + 1;
+  let emailId = data.Emails.length + 1;
 
   let email = {
     id: emailId,
@@ -29,13 +29,13 @@ function addEmailToDataBase(name, templateId) {
     currentTemplateId: templateId,
   };
 
-  Data.Emails.push(email);
+  data.Emails.push(email);
 
   return email;
 }
 
 function addTemplateToDataBase(templateId) {
-  let emailId = Data.Emails.length;
+  let emailId = data.Emails.length;
   let template = {
     id: templateId,
     emailId: emailId,
@@ -44,11 +44,11 @@ function addTemplateToDataBase(templateId) {
     clicks: 0,
   };
 
-  Data.Templates.push(template);
+  data.Templates.push(template);
 }
 
 function checkIfEmailWithSameNameExist(name) {
-  let email = Data.Emails.find((email) => email.name === name);
+  let email = data.Emails.find((email) => email.name === name);
   if (email !== undefined) {
     throw "An email with that name already exists";
   }

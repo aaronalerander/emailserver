@@ -1,6 +1,4 @@
 const Joi = require("joi");
-const { Err } = require("joi/lib/errors");
-const { max } = require("joi/lib/types/array");
 
 function validateTemplate(template) {
   const schema = {
