@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import EmailsTable from '../components/tables/EmailsTable./EmailsTable';
-import { fetchEmails } from '../api/emails/emails';
+import { fetchEmails } from '../api/emails/fetchEmails';
 
 function Emails() {
   const [emails, setEmails] = useState([]);

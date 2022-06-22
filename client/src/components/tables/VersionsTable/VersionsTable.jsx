@@ -1,6 +1,5 @@
-import React from 'react';
 import { ChakraProvider, Flex, useToast, Box } from '@chakra-ui/react';
-
+import React from 'react';
 import { useState } from 'react';
 import VersionsTableRow from './VersionsTableRow';
 import VersionsTableHeader from './VersionsTableHeader';

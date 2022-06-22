@@ -1,5 +1,3 @@
-import { useForm } from 'react-hook-form';
-import React, { useEffect } from 'react';
 import {
   Modal,
   ModalOverlay,
@@ -17,6 +15,8 @@ import {
   useToast,
   FormErrorMessage,
 } from '@chakra-ui/react';
+import React, { useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 import { fetchCurrentVersionInfo } from '../../api/editEmailModal/fetchCurrentVersionInfo';
 import { postEditedEmail } from '../../api/editEmailModal/postEditedEmail';
 

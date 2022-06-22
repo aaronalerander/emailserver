@@ -1,5 +1,5 @@
-import React from 'react';
 import { Flex, Text, Box } from '@chakra-ui/react';
+import React from 'react';
 import CreateEmailModal from '../../modals/CreateEmailModal';
 
 const EmailsTableHeader = ({ appendEmail }) => {

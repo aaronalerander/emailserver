@@ -1,5 +1,5 @@
-import React from 'react';
 import { Flex, Text, Box } from '@chakra-ui/react';
+import React from 'react';
 import EditEmailModal from '../../modals/EditEmailModal';
 
 const VersionsTableHeader = ({
