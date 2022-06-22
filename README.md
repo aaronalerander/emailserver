@@ -1,5 +1,5 @@
 # emailserver
-email serve im building with node and react
+email server im building with node and react
 
 
 To run locally. Open two terminals. In the first terminal cd into server, run npm i, run npm run devStart.
