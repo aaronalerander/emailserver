@@ -1,4 +1,4 @@
-async function putEmail(templateId, email, toast, setCurrentTemplateId) {
+async function putEmail(templateId, email) {
   let requestOptions = setRequestOptions(templateId);
 
   try {
@@ -10,18 +10,15 @@ async function putEmail(templateId, email, toast, setCurrentTemplateId) {
     let body = await response.json();
 
     if (!response.ok) {
-      showErrorToast(body, toast);
-      return;
+      return { ok: false, body };
     }
-
-    setCurrentTemplateId(body.template.id);
-
-    showSuccessToast(
-      `Sucessfuly reverted to version ${body.template.version}`,
-      toast
-    );
-    return;
-  } catch (error) {}
+    return { ok: true, body };
+  } catch (error) {
+    return {
+      ok: false,
+      body: { message: 'An email with that name already exists' },
+    };
+  }
 }
 
 function setRequestOptions(templateId) {
@@ -32,26 +29,6 @@ function setRequestOptions(templateId) {
       templateId: templateId,
     }),
   };
-}
-
-function showErrorToast(body, toast) {
-  toast({
-    title: 'Error!',
-    description: body.message,
-    status: 'error',
-    duration: 5000,
-    isClosable: true,
-  });
-}
-
-function showSuccessToast(message, toast) {
-  toast({
-    title: 'Success!',
-    description: message,
-    status: 'success',
-    duration: 5000,
-    isClosable: true,
-  });
 }
 
 exports.putEmail = putEmail;

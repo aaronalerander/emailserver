@@ -40,14 +40,31 @@ const EditEmailModal = ({
   }, [templateId, reset]);
 
   async function onSubmitEditedTemplate(values) {
-    postEditedEmail(
-      values,
-      reset,
-      email,
-      toast,
-      appendVersion,
-      setCurrentTemplateId
-    );
+    let response = await postEditedEmail(values, email);
+    reset();
+
+    if (!response.ok) {
+      toast({
+        title: 'Error!',
+        description: response.body.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success!',
+      description: "We've edited your template and added a version.",
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+
+    appendVersion(response.body.template);
+    setCurrentTemplateId(response.body.template.id);
+    return;
   }
 
   return (

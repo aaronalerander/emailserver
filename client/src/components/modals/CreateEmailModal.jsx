@@ -29,7 +29,28 @@ const CreateEmailModal = ({ appendEmail }) => {
   } = useForm();
 
   async function onSubmitCreateEmail(values) {
-    postNewEmail(values, reset, toast, appendEmail);
+    let response = await postNewEmail(values);
+    reset();
+    if (!response.ok) {
+      toast({
+        title: 'Error!',
+        description: response.body.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success!',
+      description: "You'r nre email has been created",
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+    appendEmail(response.body.email);
+    return;
   }
 
   return (
