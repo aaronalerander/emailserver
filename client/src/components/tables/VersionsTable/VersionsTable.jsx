@@ -3,6 +3,7 @@ import React from 'react';
 import { useState } from 'react';
 import VersionsTableRow from './VersionsTableRow';
 import VersionsTableHeader from './VersionsTableHeader';
+import { putEmail } from '../../../api/versionsTable/putEmail';
 
 const VersionsTable = ({ email, versions, appendVersion }) => {
   const toast = useToast();
@@ -11,43 +12,47 @@ const VersionsTable = ({ email, versions, appendVersion }) => {
   );
 
   async function setTemplateAsDefault(templateId) {
-    let requestOptions = {
-      method: 'PUT',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        templateId: templateId,
-      }),
-    };
-
-    try {
-      let response = await fetch(
-        `http://localhost:9000/email/${email.id}`,
-        requestOptions
-      );
-
-      let body = await response.json();
-
-      if (!response.ok) {
-        toast({
-          title: 'Error!',
-          description: body.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
-      }
-
-      setCurrentTemplateId(body.template.id);
-      toast({
-        title: 'Success!',
-        description: `Sucessfuly reverted to version ${body.template.version}`,
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-    } catch (error) {}
+    putEmail(templateId, email, toast, setCurrentTemplateId);
   }
+
+  // async function setTemplateAsDefault(templateId) {
+  //   let requestOptions = {
+  //     method: 'PUT',
+  //     headers: { 'Content-Type': 'application/json' },
+  //     body: JSON.stringify({
+  //       templateId: templateId,
+  //     }),
+  //   };
+
+  //   try {
+  //     let response = await fetch(
+  //       `http://localhost:9000/email/${email.id}`,
+  //       requestOptions
+  //     );
+
+  //     let body = await response.json();
+
+  //     if (!response.ok) {
+  //       toast({
+  //         title: 'Error!',
+  //         description: body.message,
+  //         status: 'error',
+  //         duration: 5000,
+  //         isClosable: true,
+  //       });
+  //       return;
+  //     }
+
+  //     setCurrentTemplateId(body.template.id);
+  //     toast({
+  //       title: 'Success!',
+  //       description: `Sucessfuly reverted to version ${body.template.version}`,
+  //       status: 'success',
+  //       duration: 5000,
+  //       isClosable: true,
+  //     });
+  //   } catch (error) {}
+  // }
 
   return (
     <>
