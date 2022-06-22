@@ -22,52 +22,11 @@ router.post("/", async (req, res) => {
 
 //revert template
 router.put("/:id", async (req, res) => {
-  if (!req.params.id) {
-    res.status(400).send("You did not include the email id");
-  }
-  if (isNaN(req.params.id)) {
-    res.status(400).send("Id must be an interger");
-  }
-
-  let emailId = parseInt(req.params.id);
-
-  const { error } = Validate.validateRevertTemplate(req.body);
-  if (error) {
-    res.status(400).send(error.details[0].message);
-    return;
-  }
-
-  let { templateId } = req.body;
-  templateId = parseInt(templateId);
-
   try {
-    let email = Data.Emails.find((email) => email.id === emailId);
-
-    if (email === undefined) {
-      res.status(404).send("that email doesnt exist");
-      return;
-    }
-
-    let template = Data.Templates.find(
-      (template) => template.id === templateId
-    );
-
-    if (template === undefined) {
-      res.status(404).send("That template version does not exist");
-      return;
-    } else if (template.emailId !== email.id) {
-      res
-        .status(404)
-        .send("This template version does not belong to this type of email");
-      return;
-    }
-
-    email.currentTemplateId = templateId;
-
-    res.status(200).send({ email: email, template: template });
+    let responceBody = email.put(req.params.id, req.body);
+    return res.status(200).send(responceBody);
   } catch (error) {
-    res.status(500).send(error);
-    return;
+    return res.status(400).send(error);
   }
 });
 

@@ -9,7 +9,7 @@ let Recipients = [
 
 let Templates = [
   { id: 28334190, emailId: 1, version: 1, opens: 0, clicks: 0 },
-  // { id: 28323904, emailId: 1, version: 2, opens: 1, clicks: 1 },
+  { id: 28333948, emailId: 1, version: 2, opens: 0, clicks: 0 },
   // { id: 1103, emailId: 2, version: 1, opens: 1, clicks: 1 },
   // { id: 1104, emailId: 3, version: 1, opens: 1, clicks: 1 },
 ];
