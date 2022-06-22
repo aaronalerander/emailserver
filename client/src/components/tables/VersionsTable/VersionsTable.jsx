@@ -12,47 +12,28 @@ const VersionsTable = ({ email, versions, appendVersion }) => {
   );
 
   async function setTemplateAsDefault(templateId) {
-    putEmail(templateId, email, toast, setCurrentTemplateId);
+    let response = await putEmail(templateId, email);
+    if (!response.ok) {
+      toast({
+        title: 'Error!',
+        description: response.body.message,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
+    toast({
+      title: 'Success!',
+      description: `Sucessfuly reverted to version ${response.body.template.version}`,
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+    setCurrentTemplateId(response.body.template.id);
+    return;
   }
-
-  // async function setTemplateAsDefault(templateId) {
-  //   let requestOptions = {
-  //     method: 'PUT',
-  //     headers: { 'Content-Type': 'application/json' },
-  //     body: JSON.stringify({
-  //       templateId: templateId,
-  //     }),
-  //   };
-
-  //   try {
-  //     let response = await fetch(
-  //       `http://localhost:9000/email/${email.id}`,
-  //       requestOptions
-  //     );
-
-  //     let body = await response.json();
-
-  //     if (!response.ok) {
-  //       toast({
-  //         title: 'Error!',
-  //         description: body.message,
-  //         status: 'error',
-  //         duration: 5000,
-  //         isClosable: true,
-  //       });
-  //       return;
-  //     }
-
-  //     setCurrentTemplateId(body.template.id);
-  //     toast({
-  //       title: 'Success!',
-  //       description: `Sucessfuly reverted to version ${body.template.version}`,
-  //       status: 'success',
-  //       duration: 5000,
-  //       isClosable: true,
-  //     });
-  //   } catch (error) {}
-  // }
 
   return (
     <>

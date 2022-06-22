@@ -1,8 +1,5 @@
-async function postNewEmail(values, reset, toast, appendEmail) {
+async function postNewEmail(values) {
   let requestOptions = setRequestOptions(values);
-
-  reset();
-
   try {
     let response = await fetch(
       'http://localhost:9000/templates',
@@ -12,18 +9,14 @@ async function postNewEmail(values, reset, toast, appendEmail) {
     let body = await response.json();
 
     if (!response.ok) {
-      showErrorToast(body, toast);
-      return;
+      return { ok: false, body };
     }
-
-    showSuccessToast(toast);
-    appendEmail(body.email);
+    return { ok: true, body };
   } catch (error) {
-    showErrorToast(
-      { message: 'Looks like you already have a template with that name' },
-      toast
-    );
-    console.log(error);
+    return {
+      ok: false,
+      body: { message: 'An email with that name already exists' },
+    };
   }
 }
 
@@ -37,26 +30,6 @@ function setRequestOptions(values) {
       textbody: values.body,
     }),
   };
-}
-
-function showErrorToast(body, toast) {
-  toast({
-    title: 'Error!',
-    description: body.message,
-    status: 'error',
-    duration: 5000,
-    isClosable: true,
-  });
-}
-
-function showSuccessToast(toast) {
-  toast({
-    title: 'Success!',
-    description: "We've edited your template and added a version.",
-    status: 'success',
-    duration: 5000,
-    isClosable: true,
-  });
 }
 
 exports.postNewEmail = postNewEmail;

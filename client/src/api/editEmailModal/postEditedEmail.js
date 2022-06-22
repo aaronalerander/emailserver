@@ -1,14 +1,5 @@
-async function postEditedEmail(
-  values,
-  reset,
-  email,
-  toast,
-  appendVersion,
-  setCurrentTemplateId
-) {
+async function postEditedEmail(values, email) {
   let requestOptions = setRequestOptions(values);
-
-  reset();
 
   try {
     let response = await fetch(
@@ -19,14 +10,11 @@ async function postEditedEmail(
     let body = await response.json();
 
     if (!response.ok) {
-      showErrorToast(body, toast);
-      return;
+      return { ok: false, body };
     }
-    showSuccessToast(toast);
-    appendVersion(body.template);
-    setCurrentTemplateId(body.template.id);
+    return { ok: true, body };
   } catch (error) {
-    console.log(error);
+    return { ok: false, body: { message: 'There was an error' } };
   }
 }
 
@@ -39,26 +27,6 @@ function setRequestOptions(values) {
       textbody: values.textbody,
     }),
   };
-}
-
-function showErrorToast(body, toast) {
-  toast({
-    title: 'Error!',
-    description: body.message,
-    status: 'error',
-    duration: 5000,
-    isClosable: true,
-  });
-}
-
-function showSuccessToast(toast) {
-  toast({
-    title: 'Success!',
-    description: "We've edited your template and added a version.",
-    status: 'success',
-    duration: 5000,
-    isClosable: true,
-  });
 }
 
 exports.postEditedEmail = postEditedEmail;

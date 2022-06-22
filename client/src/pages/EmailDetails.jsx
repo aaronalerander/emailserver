@@ -16,7 +16,7 @@ function EmailDetails() {
 
   useEffect(() => {
     fetchEmailDetails(setVersions, id);
-  });
+  }, [id]);
 
   return (
     <VersionsTable
