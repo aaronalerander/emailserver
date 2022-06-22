@@ -1,11 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const templates = require("../usecases/templates");
-const Validate = require("../Data/validate");
-const Postmark = require("../Data/PostMark");
-const Data = require("../Data/Database");
 
-// get all the templates of type emailId
 router.get("/:emailId", (req, res) => {
   try {
     let array = templates.get(req.params.emailId);
