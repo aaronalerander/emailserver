@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import EmailsTable from '../tables/EmailsTable';
+import EmailsTable from '../components/tables/EmailsTable./EmailsTable';
+import { fetchEmails } from '../api/emails/emails';
 
 function Emails() {
   const [emails, setEmails] = useState([]);
@@ -9,16 +10,7 @@ function Emails() {
   }
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        let responce = await fetch('http://localhost:9000/emails');
-        let body = await responce.json();
-        setEmails(body);
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
+    fetchEmails(setEmails);
   }, []);
 
   return <EmailsTable emails={emails} appendEmail={appendEmail}></EmailsTable>;

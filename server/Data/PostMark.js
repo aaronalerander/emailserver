@@ -1,6 +1,36 @@
+const FROM_EMAIL = "aaron@scaledrones.com";
+const SERVER_TOKEN = "42c39a60-60b2-4e07-85d9-7be497fc56f3"; //hid in env variable
 let postmark = require("postmark");
+let postmarkClient = new postmark.ServerClient(SERVER_TOKEN); // got to move these over
 
-const serverToken = "e23f58d6-bd8a-4bf1-a1f9-a7ac1174dd2b"; //hid in env variable
-let postmarkClient = new postmark.ServerClient(serverToken); // got to move these over
+function sendEmail(emailId, templateId, recipients) {
+  return postmarkClient.sendEmailWithTemplate({
+    TemplateId: templateId,
+    From: FROM_EMAIL,
+    To: recipients,
+    TemplateModel: {},
+    TrackOpens: true,
+    TrackLinks: "HtmlAndText",
+    MessageStream: "outbound",
+    Metadata: {
+      templateId: templateId,
+      emailId: emailId,
+    },
+  });
+}
 
-module.exports = { postmarkClient };
+function getTemplate(id) {
+  return postmarkClient.getTemplate(id);
+}
+
+function createTemplate(name, htmlBody, subject) {
+  return postmarkClient.createTemplate({
+    Name: name,
+    HtmlBody: htmlBody,
+    Subject: subject,
+  });
+}
+
+module.exports = { postmarkClient, sendEmail, getTemplate, createTemplate };
+
+//generic send email that takes params

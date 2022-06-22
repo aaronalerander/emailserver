@@ -1,9 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const Data = require("../Data/Database");
+const recipients = require("../usecases/recipients");
 
 router.get("/", (req, res) => {
-  res.send(Data.Recipients);
+  // let emails = emails.get();
+  res.send(recipients.get());
 });
 
 module.exports = router;

@@ -17,6 +17,8 @@ import {
   useToast,
   FormErrorMessage,
 } from '@chakra-ui/react';
+import { fetchCurrentVersionInfo } from '../../api/editEmailModal/fetchCurrentVersionInfo';
+import { postEditedEmail } from '../../api/editEmailModal/postEditedEmail';
 
 const EditEmailModal = ({
   appendVersion,
@@ -34,68 +36,18 @@ const EditEmailModal = ({
   } = useForm();
 
   useEffect(() => {
-    async function fetchData() {
-      try {
-        let responce = await fetch(
-          `http://localhost:9000/template/${templateId}`
-        );
-        let body = await responce.json();
-
-        reset({
-          subject: body.Subject,
-          textbody: body.HtmlBody,
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    }
-    fetchData();
+    fetchCurrentVersionInfo(templateId, reset);
   }, [templateId, reset]);
 
   async function onSubmitEditedTemplate(values) {
-    let requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        subject: values.subject,
-        textbody: values.textbody,
-      }),
-    };
-
-    reset();
-
-    try {
-      let response = await fetch(
-        `http://localhost:9000/template/${email.id}`,
-        requestOptions
-      );
-
-      let body = await response.json();
-
-      if (!response.ok) {
-        toast({
-          title: 'Error!',
-          description: body.message,
-          status: 'error',
-          duration: 5000,
-          isClosable: true,
-        });
-        return;
-      }
-
-      toast({
-        title: 'Success!',
-        description: "We've edited your template and added a version.",
-        status: 'success',
-        duration: 5000,
-        isClosable: true,
-      });
-
-      appendVersion(body.template);
-      setCurrentTemplateId(body.template.id);
-    } catch (error) {
-      console.log(error);
-    }
+    postEditedEmail(
+      values,
+      reset,
+      email,
+      toast,
+      appendVersion,
+      setCurrentTemplateId
+    );
   }
 
   return (

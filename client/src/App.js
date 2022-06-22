@@ -2,8 +2,8 @@ import React from 'react';
 import { Flex } from '@chakra-ui/react';
 import { Routes, Route } from 'react-router-dom';
 import Header from './components/Header';
-import Emails from './components/pages/Emails';
-import Email from './components/pages/Email';
+import Emails from './pages/Emails';
+import EmailDetails from './pages/EmailDetails';
 
 function App() {
   return (
@@ -15,7 +15,7 @@ function App() {
       <Header></Header>
       <Routes>
         <Route path="/" element={<Emails />} />
-        <Route path="/email/:id" element={<Email />} />
+        <Route path="/email/:id" element={<EmailDetails />} />
       </Routes>
     </Flex>
   );
