@@ -44,7 +44,7 @@ const CreateEmailModal = ({ appendEmail }) => {
 
     toast({
       title: 'Success!',
-      description: "You'r nre email has been created",
+      description: 'Your new email has been created',
       status: 'success',
       duration: 5000,
       isClosable: true,
