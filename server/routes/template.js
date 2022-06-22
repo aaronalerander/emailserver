@@ -1,8 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Validate = require("../Data/validate");
-const Postmark = require("../Data/PostMark");
-const Data = require("../Data/Database");
 const template = require("../usecases/template");
 
 router.get("/:id", async (req, res) => {
