@@ -1,5 +1,5 @@
 const FROM_EMAIL = "aaron@scaledrones.com";
-const SERVER_TOKEN = "42c39a60-60b2-4e07-85d9-7be497fc56f3"; //hid in env variable
+const SERVER_TOKEN = "22e36a81-c945-4b8f-9777-ebbcccd17928"; //hid in env variable
 let postmark = require("postmark");
 let postmarkClient = new postmark.ServerClient(SERVER_TOKEN); // got to move these over
 
