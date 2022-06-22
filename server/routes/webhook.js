@@ -3,7 +3,6 @@ const router = express.Router();
 
 const webhook = require("../usecases/webhook");
 
-//route for webhook
 router.post("/", async (req, res) => {
   try {
     webhook.post(req.body);

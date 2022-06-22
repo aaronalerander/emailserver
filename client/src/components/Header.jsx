@@ -1,6 +1,6 @@
-import React from 'react';
 import { ChakraProvider, Flex, Text } from '@chakra-ui/react';
 import { CalendarIcon } from '@chakra-ui/icons';
+import React from 'react';
 
 const Header = () => (
   <ChakraProvider resetCSS>

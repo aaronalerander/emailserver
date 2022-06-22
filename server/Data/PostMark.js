@@ -32,5 +32,3 @@ function createTemplate(name, htmlBody, subject) {
 }
 
 module.exports = { postmarkClient, sendEmail, getTemplate, createTemplate };
-
-//generic send email that takes params

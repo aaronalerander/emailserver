@@ -1,5 +1,5 @@
-import React from 'react';
 import { ChakraProvider, Flex, Box } from '@chakra-ui/react';
+import React from 'react';
 import EmailsTableHeader from './EmailsTableHeader';
 import EmailsTableRow from './EmailsTableRow';
 

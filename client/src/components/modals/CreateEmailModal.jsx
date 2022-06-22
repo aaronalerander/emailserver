@@ -1,5 +1,3 @@
-import { useForm } from 'react-hook-form';
-
 import {
   Modal,
   ModalOverlay,
@@ -17,6 +15,7 @@ import {
   useToast,
   FormErrorMessage,
 } from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
 import { postNewEmail } from '../../api/createEmailModal/postNewEmail';
 
 const CreateEmailModal = ({ appendEmail }) => {
