@@ -1,6 +1,3 @@
-// import {showErrorToast} from '../../utils/showErrorToast'
-// import { showSuccessToast } from '../../utils/showSuccessToast';
-
 async function postNewEmail(values, reset, toast, appendEmail) {
   let requestOptions = setRequestOptions(values);
 

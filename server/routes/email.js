@@ -1,8 +1,5 @@
 const express = require("express");
 const router = express.Router();
-const Validate = require("../Data/validate");
-const Postmark = require("../Data/PostMark");
-const Data = require("../Data/Database");
 const email = require("../usecases/email");
 
 const FROM_EMAIL = "aaron@scaledrones.com";

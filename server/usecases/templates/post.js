@@ -2,9 +2,9 @@ const Data = require("../../Data/Database");
 const Postmark = require("../../Data/PostMark");
 const Validate = require("../../Data/validate");
 
-async function post(template) {
-  let { name, subject, textbody } = validateTemplate(template);
-  validateEmail(name);
+async function post(body) {
+  let { name, subject, textbody } = validateBody(body);
+  checkIfEmailWithSameNameExist(name);
 
   let { TemplateId, Name } = await Postmark.createTemplate(
     name,
@@ -47,7 +47,7 @@ function addTemplateToDataBase(templateId) {
   Data.Templates.push(template);
 }
 
-function validateEmail(name) {
+function checkIfEmailWithSameNameExist(name) {
   let email = Data.Emails.find((email) => email.name === name);
   if (email !== undefined) {
     throw "An email with that name already exists";
@@ -55,7 +55,7 @@ function validateEmail(name) {
   return email;
 }
 
-function validateTemplate(template) {
+function validateBody(template) {
   const { error } = Validate.validateTemplate(template);
   if (error) {
     throw error.details[0].message;

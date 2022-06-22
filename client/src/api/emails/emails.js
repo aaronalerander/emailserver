@@ -8,5 +8,4 @@ async function fetchEmails(setEmails) {
   }
 }
 
-//module.exports = fetchEmails;
 exports.fetchEmails = fetchEmails;
