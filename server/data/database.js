@@ -12,6 +12,8 @@ let Templates = [
   { id: 28340119, emailId: 1, version: 2, opens: 0, clicks: 0 },
   { id: 28339915, emailId: 2, version: 1, opens: 0, clicks: 0 },
   { id: 28339955, emailId: 2, version: 2, opens: 0, clicks: 0 },
+  { id: 28340130, emailId: 3, version: 1, opens: 0, clicks: 0 },
+  { id: 28340074, emailId: 3, version: 2, opens: 0, clicks: 0 },
 ];
 
 let Emails = [
@@ -28,6 +30,13 @@ let Emails = [
     opens: 0,
     clicks: 0,
     currentTemplateId: 28339955,
+  },
+  {
+    id: 3,
+    name: "Refund",
+    opens: 0,
+    clicks: 0,
+    currentTemplateId: 28340074,
   },
 ];
 
